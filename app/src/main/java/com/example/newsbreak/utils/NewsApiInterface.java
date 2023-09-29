@@ -8,13 +8,17 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface NewsApiInterface {
-    @GET("top-headlines")
+//    @GET("top-headlines")
+//    Call<NewsSearchResponse> getHeadlines(
+//            @Query("apiKey") String key,
+//            @Query("language") String language,
+//            @Query("category") String category
+//
+//    );
+    @GET("everything")
     Call<NewsSearchResponse> getHeadlines(
-            @Query("apiKey") String key,
-            @Query("language") String language,
-            @Query("category") String category
-
-    );
+            @Query("apiKey") String apiKey,
+            @Query("q") String query);
 
     @GET("top-headlines")
     Call<NewsSearchResponse> getSearchHeadlines(

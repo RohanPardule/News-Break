@@ -30,6 +30,7 @@ public class NewsApiClient {
 
     //making global request
     private RetrieveNewsRunnable retrieveNewsRunnable;
+    private RetrieveNewsRunnable1 retrieveNewsRunnable1;
 
     public static NewsApiClient getInstance(){
         if (instance==null){
@@ -56,6 +57,24 @@ public class NewsApiClient {
         }
         retrieveNewsRunnable=new RetrieveNewsRunnable(query);
         final Future myHandler = AppExecutors.getInstance().NetworkIO().submit(retrieveNewsRunnable);
+        AppExecutors.getInstance().NetworkIO().schedule(new Runnable() {
+            @Override
+            public void run() {
+                //cancelling call
+                myHandler.cancel(true);
+
+            }
+        }, 3000, TimeUnit.MILLISECONDS);
+
+    }
+    public void displayArticlesApi() {
+
+        if (retrieveNewsRunnable1 != null)
+        {
+            retrieveNewsRunnable1=null;
+        }
+        retrieveNewsRunnable1=new RetrieveNewsRunnable1();
+        final Future myHandler = AppExecutors.getInstance().NetworkIO().submit(retrieveNewsRunnable1);
         AppExecutors.getInstance().NetworkIO().schedule(new Runnable() {
             @Override
             public void run() {
@@ -126,6 +145,69 @@ boolean cancelRequest;
                 Log.v("Tag", "Cancelling the request");
                 cancelRequest=true;
             }
+
+    }
+    private class RetrieveNewsRunnable1 implements Runnable {
+
+
+        boolean cancelRequest;
+
+        public RetrieveNewsRunnable1() {
+
+            cancelRequest=false;
+        }
+
+        @Override
+        public void run() {
+
+            //getting response body
+
+            try{
+                Response response=getArticles().execute();
+                if (cancelRequest) {
+                    return;
+
+                }
+                if (response.code() == 200){
+                    List<NewsModel> list=new ArrayList<>(((NewsSearchResponse)response.body()).getnewsArticles());
+
+                    if (list==null){
+                        mArticles.postValue(null);
+                    }
+                    else {
+                        mArticles.postValue(list);
+                    }
+
+
+                }
+                else {
+                    String error = response.errorBody().string();
+                    Log.v("tag ",error);
+                    mArticles.postValue(null);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                mArticles.postValue(null);
+            }
+
+
+
+        }
+
+//        private Call<NewsSearchResponse> getArticles(){
+//            return Servicey.getNewsApi().getHeadlines(Credentials.API_KEY,
+//                    "en","General");
+//        }
+        private Call<NewsSearchResponse> getArticles(){
+            return Servicey.getNewsApi().getHeadlines(Credentials.API_KEY,
+                    "Technology");
+        }
+
+        private void CancelRequest(){
+            Log.v("Tag", "Cancelling the request");
+            cancelRequest=true;
+        }
 
     }
 

@@ -34,4 +34,8 @@ public class NewsRepository {
         newsApiClient.searchArticlesApi(query);
     }
 
+    public void displayNewsApi(){
+        newsApiClient.displayArticlesApi();
+    }
+
 }

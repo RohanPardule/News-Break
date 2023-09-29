@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 public class NewsModel {
     @SerializedName("title")
     private String title;
+
     @SerializedName("url")
     private String url;
     @SerializedName("urlToImage")
@@ -28,4 +29,6 @@ public class NewsModel {
     public String getUrlToImage() {
         return urlToImage;
     }
+
+
 }

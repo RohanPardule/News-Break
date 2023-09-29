@@ -29,5 +29,8 @@ private NewsRepository newsRepository;
     {
         newsRepository.searchNewsApi(query);
     }
+    public void displayNewsApi(){
+        newsRepository.displayNewsApi();
+    }
 
 }
